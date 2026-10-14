@@ -1,0 +1,2 @@
+# project_timeline needs web_timeline 20.0, which is not released on OCA/web yet
+odoo-addon-web_timeline @ git+https://github.com/oros-energy/oca-web.git@20.0#subdirectory=web_timeline
