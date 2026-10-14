@@ -15,7 +15,7 @@ License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html). -->
                     name="action_open_child_project"
                     class="oe_stat_button"
                     type="object"
-                    icon="fa-tasks"
+                    icon="account_tree"
                 >
                     <field
                         string="Child Projects"
