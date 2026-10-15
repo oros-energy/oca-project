@@ -9,6 +9,9 @@ from odoo.addons.base.tests.common import BaseCommon
 
 
 class TestProjectTimeline(BaseCommon):
+    # These tests run as superuser, not as the BaseCommon test user
+    _test_user_groups = ()
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

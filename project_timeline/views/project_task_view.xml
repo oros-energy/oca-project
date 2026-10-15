@@ -34,7 +34,7 @@
                                 />
                             </t>
                             <span name="display_name">
-                                <t t-esc="record.display_name" />
+                                <t t-out="record.display_name" />
                             </span>
                             <small
                                 t-if="record.allocated_hours"
