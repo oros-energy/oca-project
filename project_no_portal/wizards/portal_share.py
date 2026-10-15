@@ -1,5 +1,5 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
-from odoo import _, api, models
+from odoo import api, models
 from odoo.exceptions import UserError
 
 BLOCKED_MODELS = ("project.project", "project.task")
@@ -25,7 +25,7 @@ class PortalShare(models.TransientModel):
             return res
 
         raise UserError(
-            _(
+            self.env._(
                 "Sharing is disabled for company %(company)s: portal users "
                 "can not access its projects or tasks. An administrator can "
                 "allow it in Settings > Project.",

@@ -1,11 +1,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 
 class ProjectProject(models.Model):
     _name = "project.project"
-    _inherit = ["project.project", "project.portal.block.mixin"]
+    _inherit = ("project.project", "project.portal.block.mixin")
 
     privacy_visibility = fields.Selection(
         default=lambda self: self._default_privacy_visibility()
@@ -44,7 +44,7 @@ class ProjectProject(models.Model):
                 and project.privacy_visibility == "portal"
             ):
                 raise ValidationError(
-                    _(
+                    self.env._(
                         "Portal visibility is disabled for company %(company)s: "
                         "portal users can not access its projects or tasks.",
                         company=company.display_name,
@@ -57,7 +57,7 @@ class ProjectProject(models.Model):
             company = project._portal_block_company()
             if company.block_project_portal_access:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Sharing is disabled for company %(company)s: portal users "
                         "can not access its projects or tasks. An administrator can "
                         "allow it in Settings > Project.",

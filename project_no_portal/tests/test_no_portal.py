@@ -30,7 +30,7 @@ class TestProjectNoPortal(TransactionCase):
                 "partner_id": cls.portal_partner.id,
                 "company_id": cls.company.id,
                 "company_ids": [(6, 0, [cls.company.id])],
-                "groups_id": [(6, 0, [cls.portal_group.id])],
+                "group_ids": [(6, 0, [cls.portal_group.id])],
             }
         )
 
@@ -188,6 +188,10 @@ class TestProjectNoPortal(TransactionCase):
         self._set_block(False)
         self.project.privacy_visibility = "portal"
         self._follow_as_portal()
+        # Portal users need to be collaborators to read the project
+        self.env["project.collaborator"].create(
+            {"project_id": self.project.id, "partner_id": self.portal_partner.id}
+        )
 
         self.assertTrue(self.PortalProject.search([("id", "=", self.project.id)]))
         self.assertTrue(self.PortalTask.search([("id", "=", self.task.id)]))

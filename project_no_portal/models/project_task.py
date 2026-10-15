@@ -4,7 +4,7 @@ from odoo import fields, models
 
 class ProjectTask(models.Model):
     _name = "project.task"
-    _inherit = ["project.task", "project.portal.block.mixin"]
+    _inherit = ("project.task", "project.portal.block.mixin")
 
     # Exposed on the kanban card to hide the "Share Task" link, which links the
     # share action directly by xml-id and thus bypasses the action-binding removal.
