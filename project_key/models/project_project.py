@@ -29,7 +29,11 @@ class Project(models.Model):
                 continue
 
             if rec.name:
-                rec.key = self.generate_project_key(rec.name)
+                # The key is required in the form, so always propose one,
+                # also on servers running with demo data or tests
+                rec.key = self.with_context(test_project_key=True).generate_project_key(
+                    rec.name
+                )
             else:
                 rec.key = ""
 
