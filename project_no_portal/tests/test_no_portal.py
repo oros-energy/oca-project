@@ -80,8 +80,13 @@ class TestProjectNoPortal(TransactionCase):
             )
 
     def test_default_visibility_is_employees(self):
+        self.assertEqual(
+            self.env["project.project"]._default_privacy_visibility(), "employees"
+        )
+        # Another installed module may change the field default, but a new
+        # project must never be visible to portal users while blocked.
         project = self.env["project.project"].create({"name": "Default Visibility"})
-        self.assertEqual(project.privacy_visibility, "employees")
+        self.assertNotEqual(project.privacy_visibility, "portal")
 
     def test_block_on_share_wizard_raises(self):
         with self.assertRaises(UserError):

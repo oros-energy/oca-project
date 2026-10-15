@@ -16,7 +16,10 @@ class TestMixin:
         self.project_action = self.env.ref("project.open_view_project_all_config")
         self.task_action = self.env.ref("project.action_view_task")
 
-        self.project_1 = self.Project.create({"name": "OCA"})
+        # The portal tests need a project visible to portal users
+        self.project_1 = self.Project.create(
+            {"name": "OCA", "privacy_visibility": "portal"}
+        )
         self.project_2 = self.Project.create({"name": "Odoo", "key": "ODOO"})
         self.project_3 = self.Project.create({"name": "Python"})
 
