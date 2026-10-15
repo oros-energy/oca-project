@@ -1,10 +1,15 @@
 from odoo import Command
+from odoo.exceptions import AccessError
+from odoo.tests import new_test_user
 
 from odoo.addons.base.tests.common import BaseCommon
 from odoo.addons.mail.tests.common import mail_new_test_user
 
 
 class TestProjectVisibility(BaseCommon):
+    # These tests run as superuser, not as the BaseCommon test user
+    _test_user_groups = ()
+
     @classmethod
     def setUpClass(cls):
         """Set up the class with initial data for tests."""
@@ -106,3 +111,53 @@ class TestProjectVisibility(BaseCommon):
             "employees",
             "privacy_visibility should be 'employees' after update",
         )
+
+    def _project_user(self, login, groups):
+        user = new_test_user(
+            self.env,
+            login=login,
+            groups="base.group_user,project.group_project_user",
+        )
+        user.write({"group_ids": [Command.link(group.id) for group in groups]})
+        return user
+
+    def test_03_member_reads_and_writes_as_user(self):
+        """A project user in one of the project's groups reads the project and
+        its tasks and may change the tasks (core rule: project readable)."""
+        task = self.env["project.task"].create(
+            {"name": "Restricted Task", "project_id": self.restricted_project.id}
+        )
+        member = self._project_user("projectgroupmember", self.group1)
+        project = self.restricted_project.with_user(member)
+        self.assertTrue(project.has_access("read"))
+        self.assertEqual(project.name, "Restricted Project")
+        self.assertIn(
+            self.restricted_project,
+            self.ProjectObj.with_user(member).search([]),
+        )
+        task_as_member = task.with_user(member)
+        self.assertTrue(task_as_member.has_access("read"))
+        self.assertEqual(task_as_member.name, "Restricted Task")
+        task_as_member.write({"name": "Changed by member"})
+        self.assertEqual(task.name, "Changed by member")
+        # the module only grants read access on the project itself
+        with self.assertRaises(AccessError):
+            project.write({"name": "Renamed by member"})
+
+    def test_04_outsider_neither_reads_nor_writes_as_user(self):
+        task = self.env["project.task"].create(
+            {"name": "Restricted Task", "project_id": self.restricted_project.id}
+        )
+        outsider = self._project_user("projectgroupoutsider", self.group2)
+        project = self.restricted_project.with_user(outsider)
+        self.assertFalse(project.has_access("read"))
+        self.assertNotIn(
+            self.restricted_project,
+            self.ProjectObj.with_user(outsider).search([]),
+        )
+        with self.assertRaises(AccessError):
+            project.check_access("read")
+        task_as_outsider = task.with_user(outsider)
+        self.assertFalse(task_as_outsider.has_access("read"))
+        with self.assertRaises(AccessError):
+            task_as_outsider.write({"name": "Changed by outsider"})

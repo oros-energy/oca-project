@@ -1,0 +1,3 @@
+id,name,model_id,group_id/id,operation,domain
+project_groups_rule,Project: employees: Groups,project.project,base.group_user,r,"[('privacy_visibility', '=', 'followers'), ('group_ids', 'in', user.all_group_ids.ids)]"
+project_task_groups_rule,Task: employees: Groups,project.task,base.group_user,r,"[('project_id', '!=', False), ('project_id.privacy_visibility', '=', 'followers'), ('project_id.group_ids', 'in', user.all_group_ids.ids)]"
