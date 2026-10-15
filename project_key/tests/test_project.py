@@ -1,6 +1,7 @@
 # Copyright 2017 - 2018 Modoolar <info@modoolar.com>
 # License LGPLv3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
+from odoo.tests import Form
 from odoo.tools import mute_logger
 
 from .test_common import TestCommon
@@ -40,6 +41,14 @@ class TestProject(TestCommon):
         project = self.Project.new({"name": "Software Development"})
         project._onchange_project_name()
         self.assertEqual(project.key, "SD")
+
+    def test_05b_form_proposes_key(self):
+        # Plain environment (no test_project_key): users must be able to save
+        # the project form without typing a key.
+        with Form(self.env["project.project"], view="project.edit_project") as form:
+            form.name = "Form Key Project"
+            self.assertEqual(form.key, "FKP")
+        self.assertEqual(form.record.key, "FKP")
 
     def test_06_name_onchange(self):
         project = self.Project.new({})
