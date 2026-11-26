@@ -19,6 +19,13 @@ class TestProject(TestCommon):
         self.assertEqual(self.task11.key, "XXX-1")
         self.assertEqual(self.task12.key, "XXX-2")
 
+    def test_02b_change_key_with_hyphen(self):
+        self.project_1.key = "OCA-X"
+        self.assertEqual(self.task11.key, "OCA-X-1")
+        self.project_1.key = "YYY"
+        self.assertEqual(self.task11.key, "YYY-1")
+        self.assertEqual(self.task12.key, "YYY-2")
+
     def test_03_name_search(self):
         projects = self.Project.name_search("ODO")
         self.assertEqual(len(projects), 1)

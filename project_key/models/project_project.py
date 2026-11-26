@@ -192,6 +192,9 @@ class Project(models.Model):
     def _update_task_keys(self):
         """
         This method will update task keys of the current project.
+
+        The number of a task key follows its last hyphen, since a project key
+        may contain hyphens itself.
         """
         self.ensure_one()
         self.flush_model()
@@ -199,7 +202,7 @@ class Project(models.Model):
         UPDATE project_task
         SET key = x.key
         FROM (
-          SELECT t.id, p.key || '-' || split_part(t.key, '-', 2) AS key
+          SELECT t.id, p.key || '-' || substring(t.key from '[^-]*$') AS key
           FROM project_task t
           INNER JOIN project_project p ON t.project_id = p.id
           WHERE t.project_id = %s
